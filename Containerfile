@@ -68,7 +68,7 @@ RUN echo "===== Install GRV v0.3.2" \
 
 RUN chown root:root /usr/local/bin/*
 
-RUN dnf install -y ansible tig
+RUN dnf install -y ansible tig vim
 
 # Install timer-for-harvest
 RUN dnf install -y \
