@@ -1,3 +1,28 @@
+FROM registry.fedoraproject.org/f33/fedora-toolbox:33 as obs-v4l2sink-builder
+
+RUN dnf install -y https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
+RUN dnf install -y obs-studio qt5-qtbase-devel obs-studio-devel cmake qt5-qtbase-private-devel
+RUN dnf groupinstall -y "Development Tools" 
+WORKDIR /tmp/
+RUN git clone --recursive https://github.com/obsproject/obs-studio.git && \
+    git clone https://github.com/CatxFish/obs-v4l2sink.git && \
+    cd obs-v4l2sink && \
+    mkdir build && cd build && \
+    cmake -DLIBOBS_INCLUDE_DIR="../../obs-studio/libobs" -DCMAKE_INSTALL_PREFIX=/usr ..  && \
+    make -j$(nproc) && \
+    make install
+
+#-- Installing: /usr/lib64/obs-plugins/v4l2sink.so
+#-- Installing: /usr/share/obs/obs-plugins/v4l2sink/locale
+#-- Installing: /usr/share/obs/obs-plugins/v4l2sink/locale/zh-TW.ini
+#-- Installing: /usr/share/obs/obs-plugins/v4l2sink/locale/zh-CN.ini
+#-- Installing: /usr/share/obs/obs-plugins/v4l2sink/locale/it_IT.ini
+#-- Installing: /usr/share/obs/obs-plugins/v4l2sink/locale/es-ES.ini
+#-- Installing: /usr/share/obs/obs-plugins/v4l2sink/locale/en-US.ini
+#-- Installing: /usr/share/obs/obs-plugins/v4l2sink/locale/de-DE.ini
+
+
+
 FROM registry.fedoraproject.org/f33/fedora-toolbox:33
 
 RUN echo "===== Install grpcurl v1.7.0=====" \
@@ -44,6 +69,26 @@ RUN echo "===== Install GRV v0.3.2" \
 RUN chown root:root /usr/local/bin/*
 
 RUN dnf install -y ansible tig
+
+# Install timer-for-harvest
+RUN dnf install -y \
+    xdg-utils netsurf \
+    https://github.com/frenkel/timer-for-harvest/releases/download/v0.3.6/fedora-33-timer-for-harvest-0.3.6-1.x86_64.rpm 
+
+# Install vscode
+RUN rpm --import https://packages.microsoft.com/keys/microsoft.asc && \
+    echo -e "[code]\nname=Visual Studio Code\nbaseurl=https://packages.microsoft.com/yumrepos/vscode\nenabled=1\ngpgcheck=1\ngpgkey=https://packages.microsoft.com/keys/microsoft.asc" > /etc/yum.repos.d/vscode.repo && \
+    dnf install -y code 
+
+
+# Install ffmpeg
+RUN dnf install -y https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm \
+                https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
+
+RUN dnf install -y obs-studio ffmpeg mplayer
+
+COPY --from=obs-v4l2sink-builder /usr/lib64/obs-plugins/v4l2sink.so /usr/lib64/obs-plugins/v4l2sink.so
+COPY --from=obs-v4l2sink-builder /usr/share/obs/obs-plugins/v4l2sink /usr/share/obs/obs-plugins/v4l2sink
 
 # Sometimes you need dig...
 # bind-utils -> dig
