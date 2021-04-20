@@ -68,7 +68,7 @@ RUN echo "===== Install GRV v0.3.2" \
 
 RUN chown root:root /usr/local/bin/*
 
-RUN dnf install -y ansible tig vim v4l-utils pip
+RUN dnf install -y ansible tig vim v4l-utils pip freerdp telnet
 
 # Install hetzner stuff
 RUN pip install hcloud
