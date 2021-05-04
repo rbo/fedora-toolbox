@@ -1,4 +1,4 @@
-FROM registry.fedoraproject.org/f33/fedora-toolbox:33 as obs-v4l2sink-builder
+FROM registry.fedoraproject.org/fedora-toolbox as obs-v4l2sink-builder
 
 RUN dnf install -y https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
 RUN dnf install -y obs-studio qt5-qtbase-devel obs-studio-devel cmake qt5-qtbase-private-devel
@@ -23,7 +23,7 @@ RUN git clone --recursive https://github.com/obsproject/obs-studio.git && \
 
 
 
-FROM registry.fedoraproject.org/f33/fedora-toolbox:33
+FROM registry.fedoraproject.org/fedora-toolbox
 
 RUN echo "===== Install grpcurl v1.7.0=====" \
  && curl -# -L -o /tmp/grpcurl.tar.gz https://github.com/fullstorydev/grpcurl/releases/download/v1.7.0/grpcurl_1.7.0_linux_x86_64.tar.gz \
