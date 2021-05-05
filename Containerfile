@@ -2,7 +2,7 @@ FROM registry.fedoraproject.org/fedora-toolbox as obs-v4l2sink-builder
 
 RUN dnf install -y https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
 RUN dnf install -y obs-studio qt5-qtbase-devel obs-studio-devel cmake qt5-qtbase-private-devel
-RUN dnf groupinstall -y "Development Tools" 
+RUN dnf groupinstall -y "Development Tools"
 WORKDIR /tmp/
 RUN git clone --recursive https://github.com/obsproject/obs-studio.git && \
     git clone https://github.com/CatxFish/obs-v4l2sink.git && \
@@ -68,7 +68,7 @@ RUN echo "===== Install GRV v0.3.2" \
 
 RUN chown root:root /usr/local/bin/*
 
-RUN dnf install -y ansible tig vim v4l-utils pip freerdp telnet
+RUN dnf install -y ansible tig vim v4l-utils pip freerdp telnet pwgen
 
 # Install hetzner stuff
 RUN pip install hcloud
@@ -76,12 +76,12 @@ RUN pip install hcloud
 # Install timer-for-harvest
 RUN dnf install -y \
     xdg-utils netsurf \
-    https://github.com/frenkel/timer-for-harvest/releases/download/v0.3.6/fedora-33-timer-for-harvest-0.3.6-1.x86_64.rpm 
+    https://github.com/frenkel/timer-for-harvest/releases/download/v0.3.6/fedora-33-timer-for-harvest-0.3.6-1.x86_64.rpm
 
 # Install vscode
 RUN rpm --import https://packages.microsoft.com/keys/microsoft.asc && \
     echo -e "[code]\nname=Visual Studio Code\nbaseurl=https://packages.microsoft.com/yumrepos/vscode\nenabled=1\ngpgcheck=1\ngpgkey=https://packages.microsoft.com/keys/microsoft.asc" > /etc/yum.repos.d/vscode.repo && \
-    dnf install -y code 
+    dnf install -y code
 
 
 # Install ffmpeg
