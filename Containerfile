@@ -68,7 +68,10 @@ RUN echo "===== Install GRV v0.3.2" \
 
 RUN chown root:root /usr/local/bin/*
 
-RUN dnf install -y ansible tig vim v4l-utils pip freerdp telnet pwgen
+RUN dnf install -y ansible tig vim v4l-utils pip freerdp telnet pwgen bind-utils \
+                   fontawesome-fonts-web.noarch fontawesome-fonts.noarch \
+                   powerline-fonts redhat-display-fonts.noarch \
+                   redhat-text-fonts.noarch texlive-fontawesome.noarch
 
 # Install hetzner stuff
 RUN pip install hcloud
