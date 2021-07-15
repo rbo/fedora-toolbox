@@ -66,6 +66,9 @@ RUN echo "===== Install GRV v0.3.2" \
  && chmod +x /usr/local/bin/grv
 
 
+# wget https://github.com/bitnami-labs/sealed-secrets/releases/download/v0.16.0/kubeseal-linux-amd64 -O kubeseal
+# sudo install -m 755 kubeseal /usr/local/bin/kubeseal
+
 RUN chown root:root /usr/local/bin/*
 
 RUN dnf install -y ansible tig vim v4l-utils pip freerdp telnet pwgen bind-utils \
@@ -78,7 +81,8 @@ RUN dnf install -y libxml2-devel gcc libxslt-devel python3-devel
 RUN pip install gmail-yaml-filters
 
 # Install hetzner stuff
-RUN pip install hcloud
+# Problem with python:
+# RUN pip install hcloud
 
 # Install timer-for-harvest
 RUN dnf install -y \
