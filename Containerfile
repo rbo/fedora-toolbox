@@ -1,3 +1,11 @@
+FROM registry.fedoraproject.org/fedora-toolbox as wdomirror-build
+
+RUN dnf install -y wayland-devel wayland-protocols-devel meson gcc && \
+    git clone https://github.com/progandy/wdomirror.git && \
+    cd wdomirror && \
+    meson build && ninja -C build
+
+
 FROM registry.fedoraproject.org/fedora-toolbox as obs-v4l2sink-builder
 
 RUN dnf install -y https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
@@ -75,7 +83,8 @@ RUN dnf install -y ansible tig vim v4l-utils pip freerdp telnet pwgen bind-utils
                    fontawesome-fonts-web.noarch fontawesome-fonts.noarch \
                    powerline-fonts redhat-display-fonts.noarch \
                    redhat-text-fonts.noarch texlive-fontawesome.noarch vim \
-                   openssl
+                   openssl wf-recorder figlet openldap-clients \
+                   poppler-utils   # provides `pdftoppm -png` convert pdf to png
 
 # Install gmail-yaml-filters
 RUN dnf install -y libxml2-devel gcc libxslt-devel python3-devel
@@ -104,6 +113,8 @@ RUN dnf install -y obs-studio ffmpeg mplayer
 
 COPY --from=obs-v4l2sink-builder /usr/lib64/obs-plugins/v4l2sink.so /usr/lib64/obs-plugins/v4l2sink.so
 COPY --from=obs-v4l2sink-builder /usr/share/obs/obs-plugins/v4l2sink /usr/share/obs/obs-plugins/v4l2sink
+
+COPY --from=wdomirror-build  /wdomirror/build/wdomirror  /usr/local/bin/wdomirror
 
 # Sometimes you need dig...
 # bind-utils -> dig
