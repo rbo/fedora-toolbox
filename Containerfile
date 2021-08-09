@@ -85,7 +85,6 @@ RUN dnf install -y ansible tig vim v4l-utils pip freerdp telnet pwgen bind-utils
                    powerline-fonts redhat-display-fonts.noarch \
                    redhat-text-fonts.noarch texlive-fontawesome.noarch vim \
                    openssl figlet openldap-clients poppler-utils
-#wf-recorder
 
 # poppler-utils  provides `pdftoppm -png` convert pdf to png
 
@@ -112,7 +111,7 @@ RUN rpm --import https://packages.microsoft.com/keys/microsoft.asc && \
 RUN dnf install -y https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm \
                 https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
 
-RUN dnf install -y obs-studio ffmpeg mplayer
+RUN dnf install -y obs-studio ffmpeg mplayer wf-recorder
 
 COPY --from=obs-v4l2sink-builder /usr/lib64/obs-plugins/v4l2sink.so /usr/lib64/obs-plugins/v4l2sink.so
 COPY --from=obs-v4l2sink-builder /usr/share/obs/obs-plugins/v4l2sink /usr/share/obs/obs-plugins/v4l2sink
