@@ -1,4 +1,5 @@
-FROM registry.fedoraproject.org/fedora-toolbox as wdomirror-build
+ARG FROM=registry.fedoraproject.org/f34/fedora-toolbox:34
+FROM ${FROM} as wdomirror-build
 
 RUN dnf install -y wayland-devel wayland-protocols-devel meson gcc && \
     git clone https://github.com/progandy/wdomirror.git && \
@@ -6,7 +7,7 @@ RUN dnf install -y wayland-devel wayland-protocols-devel meson gcc && \
     meson build && ninja -C build
 
 
-FROM registry.fedoraproject.org/fedora-toolbox as obs-v4l2sink-builder
+FROM ${FROM} as obs-v4l2sink-builder
 
 RUN dnf install -y https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
 RUN dnf install -y obs-studio qt5-qtbase-devel obs-studio-devel cmake qt5-qtbase-private-devel
@@ -31,7 +32,7 @@ RUN git clone --recursive https://github.com/obsproject/obs-studio.git && \
 
 
 
-FROM registry.fedoraproject.org/fedora-toolbox
+FROM ${FROM}
 
 RUN echo "===== Install grpcurl v1.7.0=====" \
  && curl -# -L -o /tmp/grpcurl.tar.gz https://github.com/fullstorydev/grpcurl/releases/download/v1.7.0/grpcurl_1.7.0_linux_x86_64.tar.gz \
@@ -83,8 +84,9 @@ RUN dnf install -y ansible tig vim v4l-utils pip freerdp telnet pwgen bind-utils
                    fontawesome-fonts-web.noarch fontawesome-fonts.noarch \
                    powerline-fonts redhat-display-fonts.noarch \
                    redhat-text-fonts.noarch texlive-fontawesome.noarch vim \
-                   openssl wf-recorder figlet openldap-clients \
-                   poppler-utils   # provides `pdftoppm -png` convert pdf to png
+                   openssl figlet openldap-clients poppler-utils  wf-recorder
+
+# poppler-utils  provides `pdftoppm -png` convert pdf to png
 
 # Install gmail-yaml-filters
 RUN dnf install -y libxml2-devel gcc libxslt-devel python3-devel
