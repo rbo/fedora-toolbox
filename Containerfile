@@ -90,7 +90,10 @@ RUN dnf install -y ansible tig vim v4l-utils pip freerdp telnet pwgen bind-utils
 
 # Install gmail-yaml-filters
 RUN dnf install -y libxml2-devel gcc libxslt-devel python3-devel
-RUN pip install gmail-yaml-filters
+# Install my version unless PR [0] is merged
+# [0] https://github.com/mesozoic/gmail-yaml-filters/pull/29
+#RUN pip install gmail-yaml-filters
+RUN pip install https://github.com/rbo/gmail-yaml-filters-1/archive/refs/heads/master.tar.gz
 
 # Install hetzner stuff
 # Problem with python:
