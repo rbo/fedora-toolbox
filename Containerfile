@@ -74,6 +74,12 @@ RUN echo "===== Install GRV v0.3.2" \
  && curl -# -L -o /usr/local/bin/grv https://github.com/rgburke/grv/releases/download/v0.3.2/grv_v0.3.2_linux64 \
  && chmod +x /usr/local/bin/grv
 
+# https://github.com/ibraheemdev/modern-unix#----delta--
+RUN echo "===== Install delta" \
+ && curl -# -L -o /tmp/delta.tar.gz https://github.com/dandavison/delta/releases/download/0.8.3/delta-0.8.3-x86_64-unknown-linux-gnu.tar.gz \
+ && tar --strip-components=1 -C /tmp/ -xzvf  /tmp/delta.tar.gz  '*/delta' \
+ && install -m 755 -o root /tmp/delta /usr/local/bin/ \
+ && rm /tmp/delta
 
 # wget https://github.com/bitnami-labs/sealed-secrets/releases/download/v0.16.0/kubeseal-linux-amd64 -O kubeseal
 # sudo install -m 755 kubeseal /usr/local/bin/kubeseal
@@ -84,7 +90,7 @@ RUN dnf install -y ansible tig vim v4l-utils pip freerdp telnet pwgen bind-utils
                    fontawesome-fonts-web.noarch fontawesome-fonts.noarch \
                    powerline-fonts redhat-display-fonts.noarch \
                    redhat-text-fonts.noarch texlive-fontawesome.noarch vim \
-                   openssl figlet openldap-clients poppler-utils
+                   openssl figlet openldap-clients poppler-utils the_silver_searcher
 
 # poppler-utils  provides `pdftoppm -png` convert pdf to png
 
@@ -102,7 +108,7 @@ RUN pip install https://github.com/rbo/gmail-yaml-filters-1/archive/refs/heads/m
 # Install timer-for-harvest
 RUN dnf install -y \
     xdg-utils netsurf \
-    https://github.com/frenkel/timer-for-harvest/releases/download/v0.3.6/fedora-33-timer-for-harvest-0.3.6-1.x86_64.rpm
+    https://github.com/frenkel/timer-for-harvest/releases/download/v0.3.8/timer-for-harvest-0.3.8-1.x86_64.rpm
 
 # Install vscode
 RUN rpm --import https://packages.microsoft.com/keys/microsoft.asc && \
