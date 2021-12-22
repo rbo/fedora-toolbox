@@ -1,4 +1,5 @@
-ARG FROM=registry.fedoraproject.org/fedora-toolbox:34
+ARG FEDORA_VERSION=35
+ARG FROM=registry.fedoraproject.org/fedora-toolbox:${FEDORA_VERSION}
 FROM ${FROM} as wdomirror-build
 
 RUN dnf install -y wayland-devel wayland-protocols-devel meson gcc && \
@@ -90,7 +91,8 @@ RUN dnf install -y ansible tig vim v4l-utils pip freerdp telnet pwgen bind-utils
                    fontawesome-fonts-web.noarch fontawesome-fonts.noarch \
                    powerline-fonts redhat-display-fonts.noarch \
                    redhat-text-fonts.noarch texlive-fontawesome.noarch vim \
-                   openssl figlet openldap-clients poppler-utils the_silver_searcher
+                   openssl figlet openldap-clients poppler-utils the_silver_searcher \
+                   golang
 
 # poppler-utils  provides `pdftoppm -png` convert pdf to png
 
