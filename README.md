@@ -3,7 +3,7 @@
 My personal toolbox for Fedora Silverblue
 
 ```
-toolbox create -i quay.io/rbo/fedora-toolbox:latest fedora-toolbox-$(rpm -E %fedora)
+toolbox create -i quay.io/rbo/fedora-toolbox:$(rpm -E %fedora) fedora-toolbox-$(rpm -E %fedora)
 ```
 
 
@@ -11,8 +11,8 @@ toolbox create -i quay.io/rbo/fedora-toolbox:latest fedora-toolbox-$(rpm -E %fed
 
 
 ```
-podman build -t quay.io/rbo/fedora-toolbox:latest \
-    --build-arg FEDORA_VERSION=$(rpm -E %fedora)
+podman build -t quay.io/rbo/fedora-toolbox:$(rpm -E %fedora) \
+    --build-arg FEDORA_VERSION=$(rpm -E %fedora) .
 
 ```
 

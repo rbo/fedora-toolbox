@@ -1,5 +1,6 @@
 ARG FEDORA_VERSION=35
 ARG FROM=registry.fedoraproject.org/fedora-toolbox:${FEDORA_VERSION}
+
 FROM ${FROM} as wdomirror-build
 
 RUN dnf install -y wayland-devel wayland-protocols-devel meson gcc && \
@@ -8,19 +9,19 @@ RUN dnf install -y wayland-devel wayland-protocols-devel meson gcc && \
     meson build && ninja -C build
 
 
-FROM ${FROM} as obs-v4l2sink-builder
-
-RUN dnf install -y https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
-RUN dnf install -y obs-studio qt5-qtbase-devel obs-studio-devel cmake qt5-qtbase-private-devel
-RUN dnf groupinstall -y "Development Tools"
-WORKDIR /tmp/
-RUN git clone --recursive https://github.com/obsproject/obs-studio.git && \
-    git clone https://github.com/CatxFish/obs-v4l2sink.git && \
-    cd obs-v4l2sink && \
-    mkdir build && cd build && \
-    cmake -DLIBOBS_INCLUDE_DIR="../../obs-studio/libobs" -DCMAKE_INSTALL_PREFIX=/usr ..  && \
-    make -j$(nproc) && \
-    make install
+#FROM ${FROM} as obs-v4l2sink-builder
+#
+#RUN dnf install -y https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
+#RUN dnf install -y obs-studio qt5-qtbase-devel obs-studio-devel cmake qt5-qtbase-private-devel
+#RUN dnf groupinstall -y "Development Tools"
+#WORKDIR /tmp/
+#RUN git clone --recursive https://github.com/obsproject/obs-studio.git && \
+#    git clone https://github.com/CatxFish/obs-v4l2sink.git && \
+#    cd obs-v4l2sink && \
+#    mkdir build && cd build && \
+#    cmake -DLIBOBS_INCLUDE_DIR="../../obs-studio/libobs" -DCMAKE_INSTALL_PREFIX=/usr ..  && \
+#    make -j$(nproc) && \
+#    make install
 
 #-- Installing: /usr/lib64/obs-plugins/v4l2sink.so
 #-- Installing: /usr/share/obs/obs-plugins/v4l2sink/locale
@@ -56,20 +57,9 @@ RUN echo "===== Install latest govc =====" \
  && gzip -d /usr/local/bin/govc.gz \
  && chmod +x /usr/local/bin/govc
 
-# Not need intalled on host
-# RUN echo "===== Install jq 1.6 =====" \
-#  && curl -# -L -o /usr/local/bin/jq https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64 \
-#  && chmod +x /usr/local/bin/jq
-
 RUN echo "===== Install yq 4.9.5 =====" \
  && curl -# -L -o /usr/local/bin/yq https://github.com/mikefarah/yq/releases/download/v4.9.5/yq_linux_amd64\
  && chmod +x /usr/local/bin/yq
-
-RUN echo "===== Install Harvest v0.9.8" \
- && curl -# -L -o /tmp/linux_386.zip https://github.com/jamesburns-rts/harvest-go-cli/releases/download/v0.9.8/linux_386.zip \
- && unzip -d /usr/local/bin/ /tmp/linux_386.zip harvest \
- && chmod +x /usr/local/bin/harvest \
- && rm /tmp/linux_386.zip
 
 RUN echo "===== Install GRV v0.3.2" \
  && curl -# -L -o /usr/local/bin/grv https://github.com/rgburke/grv/releases/download/v0.3.2/grv_v0.3.2_linux64 \
@@ -92,7 +82,7 @@ RUN dnf install -y ansible tig vim v4l-utils pip freerdp telnet pwgen bind-utils
                    powerline-fonts redhat-display-fonts.noarch \
                    redhat-text-fonts.noarch texlive-fontawesome.noarch vim \
                    openssl figlet openldap-clients poppler-utils the_silver_searcher \
-                   golang
+                   golang pre-commit
 
 # poppler-utils  provides `pdftoppm -png` convert pdf to png
 
@@ -103,20 +93,6 @@ RUN dnf install -y libxml2-devel gcc libxslt-devel python3-devel
 #RUN pip install gmail-yaml-filters
 RUN pip install https://github.com/rbo/gmail-yaml-filters-1/archive/refs/heads/master.tar.gz
 
-# Install hetzner stuff
-# Problem with python:
-# RUN pip install hcloud
-
-# Install timer-for-harvest
-RUN dnf install -y \
-    xdg-utils netsurf \
-    https://github.com/frenkel/timer-for-harvest/releases/download/v0.3.8/timer-for-harvest-0.3.8-1.x86_64.rpm
-
-# Install vscode
-RUN rpm --import https://packages.microsoft.com/keys/microsoft.asc && \
-    echo -e "[code]\nname=Visual Studio Code\nbaseurl=https://packages.microsoft.com/yumrepos/vscode\nenabled=1\ngpgcheck=1\ngpgkey=https://packages.microsoft.com/keys/microsoft.asc" > /etc/yum.repos.d/vscode.repo && \
-    dnf install -y code
-
 # Install github cli
 RUN curl -L -o /etc/yum.repos.d/gh-cli.repo https://cli.github.com/packages/rpm/gh-cli.repo && \
     dnf install -y gh
@@ -126,10 +102,11 @@ RUN curl -L -o /etc/yum.repos.d/gh-cli.repo https://cli.github.com/packages/rpm/
 RUN dnf install -y https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm \
                 https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
 
-RUN dnf install -y obs-studio ffmpeg mplayer wf-recorder
+#RUN dnf install -y obs-studio ffmpeg mplayer wf-recorder
+RUN dnf install -y ffmpeg mplayer wf-recorder
 
-COPY --from=obs-v4l2sink-builder /usr/lib64/obs-plugins/v4l2sink.so /usr/lib64/obs-plugins/v4l2sink.so
-COPY --from=obs-v4l2sink-builder /usr/share/obs/obs-plugins/v4l2sink /usr/share/obs/obs-plugins/v4l2sink
+#COPY --from=obs-v4l2sink-builder /usr/lib64/obs-plugins/v4l2sink.so /usr/lib64/obs-plugins/v4l2sink.so
+#COPY --from=obs-v4l2sink-builder /usr/share/obs/obs-plugins/v4l2sink /usr/share/obs/obs-plugins/v4l2sink
 
 COPY --from=wdomirror-build  /wdomirror/build/wdomirror  /usr/local/bin/wdomirror
 
