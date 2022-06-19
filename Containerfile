@@ -1,13 +1,16 @@
-ARG FEDORA_VERSION=35
+ARG FEDORA_VERSION=36
 ARG FROM=registry.fedoraproject.org/fedora-toolbox:${FEDORA_VERSION}
 
 FROM ${FROM} as wdomirror-build
 
+ADD wdomirror.patch /tmp/wdomirror.patch
+
+# https://github.com/progandy/wdomirror/issues/5
 RUN dnf install -y wayland-devel wayland-protocols-devel meson gcc && \
     git clone https://github.com/progandy/wdomirror.git && \
     cd wdomirror && \
+    cat  /tmp/wdomirror.patch | git apply && \
     meson build && ninja -C build
-
 
 #FROM ${FROM} as obs-v4l2sink-builder
 #
