@@ -1,42 +1,6 @@
 ARG FEDORA_VERSION=36
 ARG FROM=registry.fedoraproject.org/fedora-toolbox:${FEDORA_VERSION}
 
-FROM ${FROM} as wdomirror-build
-
-ADD wdomirror.patch /tmp/wdomirror.patch
-
-# https://github.com/progandy/wdomirror/issues/5
-RUN dnf install -y wayland-devel wayland-protocols-devel meson gcc && \
-    git clone https://github.com/progandy/wdomirror.git && \
-    cd wdomirror && \
-    cat  /tmp/wdomirror.patch | git apply && \
-    meson build && ninja -C build
-
-#FROM ${FROM} as obs-v4l2sink-builder
-#
-#RUN dnf install -y https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
-#RUN dnf install -y obs-studio qt5-qtbase-devel obs-studio-devel cmake qt5-qtbase-private-devel
-#RUN dnf groupinstall -y "Development Tools"
-#WORKDIR /tmp/
-#RUN git clone --recursive https://github.com/obsproject/obs-studio.git && \
-#    git clone https://github.com/CatxFish/obs-v4l2sink.git && \
-#    cd obs-v4l2sink && \
-#    mkdir build && cd build && \
-#    cmake -DLIBOBS_INCLUDE_DIR="../../obs-studio/libobs" -DCMAKE_INSTALL_PREFIX=/usr ..  && \
-#    make -j$(nproc) && \
-#    make install
-
-#-- Installing: /usr/lib64/obs-plugins/v4l2sink.so
-#-- Installing: /usr/share/obs/obs-plugins/v4l2sink/locale
-#-- Installing: /usr/share/obs/obs-plugins/v4l2sink/locale/zh-TW.ini
-#-- Installing: /usr/share/obs/obs-plugins/v4l2sink/locale/zh-CN.ini
-#-- Installing: /usr/share/obs/obs-plugins/v4l2sink/locale/it_IT.ini
-#-- Installing: /usr/share/obs/obs-plugins/v4l2sink/locale/es-ES.ini
-#-- Installing: /usr/share/obs/obs-plugins/v4l2sink/locale/en-US.ini
-#-- Installing: /usr/share/obs/obs-plugins/v4l2sink/locale/de-DE.ini
-
-
-
 FROM ${FROM}
 
 RUN echo "===== Install grpcurl v1.7.0=====" \
@@ -100,18 +64,11 @@ RUN pip install https://github.com/rbo/gmail-yaml-filters-1/archive/refs/heads/m
 RUN curl -L -o /etc/yum.repos.d/gh-cli.repo https://cli.github.com/packages/rpm/gh-cli.repo && \
     dnf install -y gh
 
-
 # Install ffmpeg
 RUN dnf install -y https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm \
                 https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
 
-#RUN dnf install -y obs-studio ffmpeg mplayer wf-recorder
 RUN dnf install -y ffmpeg mplayer wf-recorder
-
-#COPY --from=obs-v4l2sink-builder /usr/lib64/obs-plugins/v4l2sink.so /usr/lib64/obs-plugins/v4l2sink.so
-#COPY --from=obs-v4l2sink-builder /usr/share/obs/obs-plugins/v4l2sink /usr/share/obs/obs-plugins/v4l2sink
-
-COPY --from=wdomirror-build  /wdomirror/build/wdomirror  /usr/local/bin/wdomirror
 
 # Sometimes you need dig...
 # bind-utils -> dig
