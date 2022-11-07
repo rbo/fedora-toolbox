@@ -49,7 +49,7 @@ RUN dnf install -y ansible tig vim v4l-utils pip freerdp telnet pwgen bind-utils
                    powerline-fonts redhat-display-fonts.noarch \
                    redhat-text-fonts.noarch texlive-fontawesome.noarch vim \
                    openssl figlet openldap-clients poppler-utils the_silver_searcher \
-                   golang pre-commit
+                   golang pre-commit ack
 
 # poppler-utils  provides `pdftoppm -png` convert pdf to png
 
