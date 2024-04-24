@@ -1,4 +1,4 @@
-ARG FEDORA_VERSION=38
+ARG FEDORA_VERSION=40
 ARG FROM=registry.fedoraproject.org/fedora-toolbox:${FEDORA_VERSION}
 
 FROM ${FROM}
@@ -45,7 +45,7 @@ RUN echo "===== Install delta" \
 RUN chown root:root /usr/local/bin/*
 
 RUN dnf install -y ansible tig vim v4l-utils pip freerdp telnet pwgen bind-utils \
-                   fontawesome-fonts-web.noarch fontawesome-fonts.noarch \
+                   fontawesome-fonts-web.noarch \
                    powerline-fonts redhat-display-fonts.noarch \
                    redhat-text-fonts.noarch texlive-fontawesome.noarch vim \
                    openssl figlet openldap-clients poppler-utils the_silver_searcher \
